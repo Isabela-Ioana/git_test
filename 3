@@ -1,0 +1,29 @@
+1)
+UPDATE Events
+SET event_date = TO_DATE('2023-01-01', 'YYYY-MM-DD')
+WHERE venue_id = (SELECT venue_id FROM Venues WHERE name = 'Local B');
+SELECT title, event_date
+FROM Events
+WHERE venue_id = (SELECT venue_id FROM Venues WHERE name = 'Local B');
+
+2)
+SELECT V.name AS Venue_Name, MAX(E.event_date) AS Last_Event_Date
+FROM Venues V
+JOIN Events E ON V.venue_id = E.venue_id
+WHERE E.event_date >= ADD_MONTHS(SYSDATE, -6)
+GROUP BY V.name;
+
+3)
+SELECT A.name AS Artist_Name, COUNT(DISTINCT ET.event_type_id) AS Event_Type_Count
+FROM Artists A
+JOIN EventArtists EA ON A.artist_id = EA.artist_id
+JOIN Events E ON EA.event_id = E.event_id
+JOIN EventTypesEvents ET ON E.event_id = ET.event_id
+GROUP BY A.name
+HAVING COUNT(DISTINCT ET.event_type_id) >= 2;
+
+4)
+SELECT A.name AS Artist_Name, COALESCE(E.title, 'Niciun eveniment') AS Event_Title
+FROM Artists A
+LEFT JOIN EventArtists EA ON A.artist_id = EA.artist_id
+LEFT JOIN Events E ON EA.event_id = E.event_id;
