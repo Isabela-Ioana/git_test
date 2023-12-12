@@ -1,0 +1,34 @@
+1)
+UPDATE Authors
+SET bio = bio || ' - ediție veche'
+WHERE author_id IN (
+    SELECT DISTINCT A.author_id
+    FROM Authors A
+    JOIN BookAuthors BA ON A.author_id = BA.author_id
+    JOIN Books B ON BA.book_id = B.book_id
+    WHERE B.publication_year < 1990
+);
+SELECT name, bio
+FROM Authors
+WHERE bio LIKE '% - ediție veche%';
+
+2)
+SELECT L.name AS Library_Name, COUNT(B.book_id) AS Total_Books
+FROM Libraries L
+LEFT JOIN Books B ON L.library_id = B.library_id
+GROUP BY L.name
+ORDER BY Total_Books ASC;
+
+3) 
+SELECT G.name AS Genre_Name, COUNT(DISTINCT BG.book_id) AS Distinct_Books
+FROM Genres G
+JOIN BookGenres BG ON G.genre_id = BG.genre_id
+GROUP BY G.name
+HAVING COUNT(DISTINCT BG.book_id) >= 2;
+4) 
+SELECT A.name AS Author_Name, COUNT(DISTINCT BG.genre_id) AS Total_Genres
+FROM Authors A
+JOIN BookAuthors BA ON A.author_id = BA.author_id
+JOIN Books B ON BA.book_id = B.book_id
+JOIN BookGenres BG ON B.book_id = BG.book_id
+GROUP BY A.name;
