@@ -1,0 +1,34 @@
+1)
+UPDATE Books
+SET publication_year = 2000
+WHERE title LIKE 'H%' AND library_id = 1;
+SELECT title, publication_year
+FROM Books
+WHERE title LIKE 'H%' AND library_id = 1;
+
+2)
+SELECT Genres.name AS Genre, COUNT(*) AS NumberOfBooks
+FROM BookGenres
+JOIN Genres ON BookGenres.genre_id = Genres.genre_id
+GROUP BY Genres.name;
+
+3)
+SELECT Authors.name AS Author, COUNT(*) AS NumberOfBooks
+FROM BookAuthors
+JOIN Authors ON BookAuthors.author_id = Authors.author_id
+GROUP BY Authors.name
+HAVING COUNT(*) > 2;
+
+4)
+SELECT genre_id
+FROM BookGenres
+WHERE book_id = (SELECT book_id FROM Books WHERE title = 'Runaway');
+SELECT DISTINCT Books.title, Genres.name
+FROM Books
+JOIN BookGenres ON Books.book_id = BookGenres.book_id
+JOIN Genres ON BookGenres.genre_id = Genres.genre_id
+WHERE Genres.genre_id IN (
+    SELECT genre_id
+    FROM BookGenres
+    WHERE book_id = (SELECT book_id FROM Books WHERE title = 'Runaway')
+) AND Books.title != 'Runaway';
